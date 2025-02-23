@@ -8,15 +8,15 @@ export default function NavBar() {
 
   return (
     <nav className="hidden md:flex items-center gap-8">
-      <Link href="/map" className={`text-gray-600 hover:text-gray-900 ${pathname === '/map' ? 'border-b-2 border-green-600' : ''}`}>
-        Map
-      </Link>
-      <Link href="/impact" className={`text-gray-600 hover:text-gray-900 ${pathname === '/impact' ? 'border-b-2 border-green-600' : ''}`}>
-        Impact
-      </Link>
-      <Link href="/achievement" className={`text-gray-600 hover:text-gray-900 ${pathname === '/achievement' ? 'border-b-2 border-green-600' : ''}`}>
-        Achievement
-      </Link>
-    </nav>
+  <Link href="/map" className={`text-white hover:text-gray-300 ${pathname === '/map' ? 'border-b-2 border-white' : ''}`}>
+    Map
+  </Link>
+  <Link href="/impact" className={`text-white hover:text-gray-300 ${pathname === '/impact' ? 'border-b-2 border-white' : ''}`}>
+    Impact
+  </Link>
+  <Link href="/achievement" className={`text-white hover:text-gray-300 ${pathname === '/achievement' ? 'border-b-2 border-white' : ''}`}>
+    Achievement
+  </Link>
+</nav>
   )
 }

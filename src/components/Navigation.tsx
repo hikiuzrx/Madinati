@@ -55,8 +55,11 @@ export default function Navigation() {
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_auto_auto] gap-4">
+        <div className="grid grid-cols-1 lg:grid-rows-2 gap-4">
+          
             <Map directions={directions} />
+           
+            
             <div className="space-y-4 h-full grid grid-rows-[auto_1fr]">
                 <div className="space-y-2">
                     <LocationPicker
