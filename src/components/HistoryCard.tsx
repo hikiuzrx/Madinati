@@ -63,7 +63,7 @@ export default function TrendingCard({
                                 toast.info("Locations set");
                             }}
                             key={index}
-                            className="grid grid-cols-[3fr_1fr] gap-x-4 gap-y-2 border-b py-2 last:border-b-0 items-start text-start cursor-pointer hover:bg-gray-50 px-2">
+                            className="grid grid-cols-[3fr_1fr] gap-x-4 gap-y-2 border-b py-2 last:border-b-0 items-start text-start cursor-pointer hover:bg-gray-50 px-2 hover:text-black">
                             <div className="break-words">
                                 {place.from} ➡️ {place.to}
                             </div>

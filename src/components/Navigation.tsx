@@ -84,7 +84,7 @@ export default function Navigation() {
                     />
                 )}
             </div>
-            <Options />
+          
         </div>
     );
 }
