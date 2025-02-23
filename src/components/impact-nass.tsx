@@ -38,15 +38,15 @@ export default function ImpactDashboard() {
     labels: months,
     datasets: [
       {
-        label: "Trees Planted",
-        data: [500, 1500, 4000, 4200, 5000, 7000, 9000, 10000, 11000, 12500, 13500, 15000],
+        label: "Green Energy Usage",
+        data: [500, 1500, 2300, 4200, 5000, 7000, 9000, 10000, 11000, 12500, 13500, 15000],
         borderColor: "#20B2AA",
         backgroundColor: "#20B2AA",
         tension: 0.4,
       },
       {
         label: "Carbon Emissions (tons)",
-        data: [14000, 12000, 11500, 10000, 8000, 8200, 7000, 5000, 4500, 4000, 3500, 2500],
+        data: [12500, 12000, 11500, 10000, 9000, 8200, 7000, 6000, 5500, 5000, 4500, 4000],
         borderColor: "#FF1493",
         backgroundColor: "#FF1493",
         tension: 0.4,
@@ -117,6 +117,9 @@ export default function ImpactDashboard() {
               },
             }}
           />
+        </div>
+        <div className="flex items-center gap-2 leading-none text-2xl text-gray-300">
+                  Showing environmental impact metrics for the last 12 months
         </div>
 
         <h2 className="text-2xl font-bold text-green-400 mt-12 mb-8">Funding and Engagement Metrics</h2>
