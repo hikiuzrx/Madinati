@@ -98,7 +98,7 @@ export default function LocationPicker({ location, set_location, label }: Locati
                     onChange={handleInputChange}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    className="w-full"
+                    className="w-full text-black"
                 />
                 <Button variant="secondary" onClick={handleFindClosestStation}>
                     <LocateFixed className="m-1" />
@@ -111,7 +111,7 @@ export default function LocationPicker({ location, set_location, label }: Locati
                             {filteredLocations.map((l) => (
                                 <li
                                     key={l}
-                                    className="flex items-center py-2 cursor-pointer hover:bg-gray-100"
+                                    className="flex items-center py-2 cursor-pointer hover:bg-gray-100 text-black"
                                     onMouseDown={() => handleSelect(l)}>
                                     <Check
                                         className={cn(
@@ -124,7 +124,7 @@ export default function LocationPicker({ location, set_location, label }: Locati
                             ))}
                         </ul>
                     ) : (
-                        <div className="p-2">No location found.</div>
+                        <div className="p-2 text-black">No location found.</div>
                     )}
                 </div>
             )}
