@@ -1,9 +1,10 @@
+import ImpactDashboard from '@/components/impact-nass'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      impact
+     <ImpactDashboard />
     </div>
   )
 }
