@@ -231,20 +231,19 @@ export function mergePath(path: Direction[]): Direction[] {
     });
     return mergedPath;
 }
-// Carbon emission factors (kg CO2 per kilometer)
 const CARBON_FACTORS = {
-    bus: 0.089,      // Average bus emissions per passenger
-    metro: 0.041,    // Metro/train emissions per passenger
-    tramway: 0.035,  // Tramway emissions per passenger
-    telepherique: 0.025, // Cable car estimated emissions
-    foot: 0,         // Walking has no direct emissions
-    car: 0.171       // Average car emissions for comparison
+    bus: 0.089,
+    metro: 0.041,
+    tramway: 0.035,
+    telepherique: 0.025,
+    foot: 0,
+    car: 0.171
 };
 
 interface CarbonMetrics {
-    actualCarbon: number;    // Carbon emitted by chosen transport
-    expectedCarbon: number;  // Carbon if taken by car
-    savedCarbon: number;     // Difference between actual and expected
+    actualCarbon: number;
+    expectedCarbon: number;
+    savedCarbon: number;
     breakdown: {
         method: string;
         distance: number;
@@ -258,15 +257,10 @@ function calculateCarbonMetrics(directions: Direction[]): CarbonMetrics {
     const breakdown: any[] = [];
 
     directions.forEach(direction => {
-     
         const distanceKm = direction.distance / 1000;
-      
         const carbonFactor = CARBON_FACTORS[direction.method as keyof typeof CARBON_FACTORS] || 0;
         const segmentCarbon = distanceKm * carbonFactor;
-        
-    
         const carSegmentCarbon = distanceKm * CARBON_FACTORS.car;
-        
         actualCarbon += segmentCarbon;
         expectedCarbon += carSegmentCarbon;
 
@@ -289,7 +283,7 @@ function calculateCarbonMetrics(directions: Direction[]): CarbonMetrics {
 
 async function sendCarbonData(carbonMetrics: CarbonMetrics) {
     try {
-        const response = await fetch('/api/carbon-metrics', {
+        const response = await fetch('http://localhost:3000/api/carbon', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -298,7 +292,7 @@ async function sendCarbonData(carbonMetrics: CarbonMetrics) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to send carbon metrics');
+          console.log('Error sending carbon metrics:', response.statusText);
         }
 
         const data = await response.json();
