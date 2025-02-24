@@ -48,7 +48,7 @@ export default function DirectionsCard({
                         {flat_directions.map((direction, index) => (
                             <div
                                 key={index}
-                                className="grid grid-cols-[6fr_2fr_2fr_1fr] gap-x-4 gap-y-2 border-b py-2 last:border-b-0 items-center hover:bg-gray-50 px-2">
+                                className="grid grid-cols-[6fr_2fr_2fr_1fr] gap-x-4 gap-y-2 border-b py-2 last:border-b-0 items-center hover:bg-gray-50 hover:text-black px-2">
                                 <div className="break-words">
                                     <div className="relative group inline-block">
                                         <span

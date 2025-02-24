@@ -48,8 +48,8 @@ export default function RootLayout({
                 <Menu className="h-5 w-5 text-gray-600" />
               </Button>
               <Link href="/" className="flex items-center gap-1">
-                <span className="text-green-600 font-bold text-xl">Madi</span>
-                <span className="font-medium text-xl">nati</span>
+                <span className="text-green-600 font-bold text-xl">Trans</span>
+                <span className="font-medium text-xl">eco</span>
               </Link>
             </div>
 
