@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
+import LocationPicker from "@/components/LocationPicker";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import LocationPicker from "./LocationPicker";
-import Map from "./MapCard";
+import { calculateDirections } from "@/lib/calculateDirections";
+import { HistoryEntry } from "@/lib/schemas/history";
+import { Direction } from "@/lib/schemas/calculations";
 import DirectionsCard from "./DirectionsCard";
 import HistoryCard from "./HistoryCard";
-import { Button } from "@/components/ui/button";
-import { calculateDirections } from "@/lib/calculateDirections";
-import type { Direction } from "@/lib/schemas/calculations";
-import { HistoryEntry } from "@/lib/schemas/history";
+
+const Map = dynamic(() => import("@/components/MapCard"), { ssr: false });
 
 function updateLocationHistory(
     departingLocation: string,
@@ -23,13 +25,13 @@ function updateLocationHistory(
         time: new Date().toISOString(),
     };
     try {
-        const stored = localStorage.getItem(storageKey);
-        const history = stored ? JSON.parse(stored) : [];
-        localStorage.setItem(storageKey, JSON.stringify([entry, ...history]));
-        setHistory([entry, ...history]);
-    } catch {
-        localStorage.setItem(storageKey, JSON.stringify([entry]));
-        setHistory([entry]);
+        const storedHistory = localStorage.getItem(storageKey);
+        const history = storedHistory ? JSON.parse(storedHistory) : [];
+        history.push(entry);
+        localStorage.setItem(storageKey, JSON.stringify(history));
+        setHistory(history);
+    } catch (error) {
+        toast.error("Failed to update location history");
     }
 }
 
