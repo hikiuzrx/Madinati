@@ -75,7 +75,7 @@ function deltaDirection(
     return "unknown";
 }
 
-function calculateDirections(departure: string, destination: string): Direction[] {
+export function calculateDirections(departure: string, destination: string): Direction[] {
     console.time("calculateDirections");
     const startStation = findStation(departure);
     const endStation = findStation(destination);
@@ -157,6 +157,7 @@ function calculateDirections(departure: string, destination: string): Direction[
             .filter(({ station }) => !currentStation.leads_to.includes(station.name))
             .sort((a, b) => a.distance - b.distance);
 
+
         walkStations.forEach(({ station: walkStation, distance }) => {
             const stepDuration = distance / 40;
             const alt = currentDur + stepDuration;
@@ -185,26 +186,32 @@ function calculateDirections(departure: string, destination: string): Direction[
         });
     }
 
+
+
     if (durations[endStation.name] === Infinity) {
         throw new Error("No path found.");
     }
 
     const path: Direction[] = [];
-    let curr = endStation.name;
-    while (previous[curr]) {
-        path.unshift(previous[curr]!);
-        curr = previous[curr]!.from;
+    let current = endStation.name;
+    while (current !== startStation.name) {
+        const prev = previous[current];
+        if (!prev) {
+            throw new Error("No path found.");
+        }
+        path.push(prev);
+        current = prev.from;
     }
-
-    if (path.length === 0) throw new Error("No suitable path found");
-
+    path.reverse();
     console.timeEnd("calculateDirections");
-    const totalDuration = path.reduce((acc, x) => acc + x.duration, 0);
-    toast.success(`Found path from ${departure} to ${destination} in ${totalDuration} minutes.`);
-    return path;
+
+    return mergePath(path);
+    
+   
+    
 }
 
-function mergePath(path: Direction[]): Direction[] {
+export function mergePath(path: Direction[]): Direction[] {
     const mergedPath: Direction[] = [];
     path.forEach((current) => {
         if (mergedPath.length > 0) {
@@ -224,5 +231,93 @@ function mergePath(path: Direction[]): Direction[] {
     });
     return mergedPath;
 }
+// Carbon emission factors (kg CO2 per kilometer)
+const CARBON_FACTORS = {
+    bus: 0.089,      // Average bus emissions per passenger
+    metro: 0.041,    // Metro/train emissions per passenger
+    tramway: 0.035,  // Tramway emissions per passenger
+    telepherique: 0.025, // Cable car estimated emissions
+    foot: 0,         // Walking has no direct emissions
+    car: 0.171       // Average car emissions for comparison
+};
 
-export { calculateDirections, mergePath };
+interface CarbonMetrics {
+    actualCarbon: number;    // Carbon emitted by chosen transport
+    expectedCarbon: number;  // Carbon if taken by car
+    savedCarbon: number;     // Difference between actual and expected
+    breakdown: {
+        method: string;
+        distance: number;
+        carbonEmitted: number;
+    }[];
+}
+
+function calculateCarbonMetrics(directions: Direction[]): CarbonMetrics {
+    let actualCarbon = 0;
+    let expectedCarbon = 0;
+    const breakdown: any[] = [];
+
+    directions.forEach(direction => {
+     
+        const distanceKm = direction.distance / 1000;
+      
+        const carbonFactor = CARBON_FACTORS[direction.method as keyof typeof CARBON_FACTORS] || 0;
+        const segmentCarbon = distanceKm * carbonFactor;
+        
+    
+        const carSegmentCarbon = distanceKm * CARBON_FACTORS.car;
+        
+        actualCarbon += segmentCarbon;
+        expectedCarbon += carSegmentCarbon;
+
+        breakdown.push({
+            method: direction.method,
+            distance: direction.distance,
+            carbonEmitted: segmentCarbon
+        });
+    });
+
+    const savedCarbon = expectedCarbon - actualCarbon;
+
+    return {
+        actualCarbon: Number(actualCarbon.toFixed(3)),
+        expectedCarbon: Number(expectedCarbon.toFixed(3)),
+        savedCarbon: Number(savedCarbon.toFixed(3)),
+        breakdown
+    };
+}
+
+async function sendCarbonData(carbonMetrics: CarbonMetrics) {
+    try {
+        const response = await fetch('/api/carbon-metrics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(carbonMetrics)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send carbon metrics');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error sending carbon metrics:', error);
+        toast.error('Failed to save carbon metrics');
+        throw error;
+    }
+}
+
+
+export function calculateDirectionsWithCarbon(departure: string, destination: string): { directions: Direction[], carbonMetrics: CarbonMetrics } {
+    const directions = calculateDirections(departure, destination);
+    const carbonMetrics = calculateCarbonMetrics(directions);
+    
+ 
+    sendCarbonData(carbonMetrics).catch(console.error);
+    
+    return { directions, carbonMetrics };
+}
+

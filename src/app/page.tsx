@@ -5,7 +5,7 @@ import Warning from "@/components/Warning";
 import dynamic from "next/dynamic";
 
 const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false });
-const Article = dynamic(() => import("@/components/Article"), { ssr: false });
+
 const Report = dynamic(() => import("@/components/Report"), { ssr: false });
 
 export default function Home() {

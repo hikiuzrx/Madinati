@@ -19,67 +19,48 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement, BarElement)
 
 export default function ImpactDashboard() {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
-
-  const environmentalData = {
-    labels: months,
+  // Static demo data
+  const monthlyData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
-        label: "Green Energy Usage",
-        data: [500, 1500, 2300, 4200, 5000, 7000, 9000, 10000, 11000, 12500, 13500, 15000],
+        label: "Actual Carbon Emissions",
+        data: [50, 45, 40, 35, 30, 25],
         borderColor: "#20B2AA",
         backgroundColor: "#20B2AA",
         tension: 0.4,
       },
       {
-        label: "Carbon Emissions (tons)",
-        data: [12500, 12000, 11500, 10000, 9000, 8200, 7000, 6000, 5500, 5000, 4500, 4000],
+        label: "Expected Car Emissions",
+        data: [100, 95, 90, 85, 80, 75],
         borderColor: "#FF1493",
         backgroundColor: "#FF1493",
         tension: 0.4,
-      },
+      }
+    ],
+  }
+
+  const transportModeData = {
+    labels: ["Bus", "Metro", "Tramway", "Walking"],
+    datasets: [
       {
-        label: "Trash Collected (tons)",
-        data: [1000, 1500, 3000, 3500, 3200, 5000, 6500, 6200, 6300, 8000, 8200, 9000],
-        borderColor: "#1E90FF",
-        backgroundColor: "#1E90FF",
-        tension: 0.4,
+        data: [40, 30, 20, 10],
+        backgroundColor: ["#20B2AA", "#1E90FF", "#DAA520", "#4CAF50"],
+        borderColor: "rgba(255, 255, 255, 0.2)",
+        borderWidth: 1,
       },
     ],
   }
 
-  const donationData = {
-    labels: ["Individual Donors", "Corporate Sponsors", "Grants", "Events"],
+  const transportData = {
+    labels: ["Bus", "Metro", "Tramway", "Telepherique", "Walking"],
     datasets: [
       {
-        data: [40, 25, 20, 15],
-        backgroundColor: ["#FF1493", "#1E90FF", "#DAA520", "#20B2AA"],
+        label: "Carbon Saved (kg CO₂)",
+        data: [150, 200, 180, 120, 300],
+        backgroundColor: ["#20B2AA", "#1E90FF", "#DAA520", "#FF8C00", "#4CAF50"],
         borderColor: "#ffffff",
-        borderWidth: 2,
-      },
-    ],
-  }
-
-  const volunteerData = {
-    labels: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
-    datasets: [
-      {
-        label: "Active Volunteers",
-        data: [650, 580, 480, 510, 420],
-        backgroundColor: ["#FF1493", "#FF8C00", "#DAA520", "#20B2AA", "#1E90FF"],
+        borderWidth: 1,
       },
     ],
   }
@@ -87,12 +68,13 @@ export default function ImpactDashboard() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Environmental Impact Overview</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">Transport Carbon Impact Overview</h1>
 
-        {/* Environmental Impact Chart */}
-        <div className="bg-black/20 p-6 rounded-lg">
+        {/* Carbon Savings Chart */}
+        <div className="bg-card p-6 rounded-lg border border-border">
+          <h3 className="text-xl text-card-foreground mb-4">Carbon Emissions Timeline</h3>
           <Line
-            data={environmentalData}
+            data={monthlyData}
             options={{
               responsive: true,
               scales: {
@@ -118,18 +100,13 @@ export default function ImpactDashboard() {
             }}
           />
         </div>
-        <div className="flex items-center gap-2 leading-none text-2xl text-gray-300">
-                  Showing environmental impact metrics for the last 12 months
-        </div>
-
-        <h2 className="text-2xl font-bold text-green-400 mt-12 mb-8">Funding and Engagement Metrics</h2>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Donation Sources */}
-          <div className="bg-black/20 p-6 rounded-lg">
-            <h3 className="text-xl text-white mb-4">Donation Sources</h3>
+          {/* Transport Mode Distribution */}
+          <div className="bg-card p-6 rounded-lg border border-border">
+            <h3 className="text-xl text-card-foreground mb-4">Transport Mode Distribution</h3>
             <Doughnut
-              data={donationData}
+              data={transportModeData}
               options={{
                 responsive: true,
                 plugins: {
@@ -142,11 +119,11 @@ export default function ImpactDashboard() {
             />
           </div>
 
-          {/* Volunteer Distribution */}
-          <div className="bg-black/20 p-6 rounded-lg">
-            <h3 className="text-xl text-white mb-4">Volunteer Distribution</h3>
+          {/* Carbon Savings by Transport Type */}
+          <div className="bg-card p-6 rounded-lg border border-border">
+            <h3 className="text-xl text-card-foreground mb-4">Carbon Savings by Transport Type</h3>
             <Bar
-              data={volunteerData}
+              data={transportData}
               options={{
                 responsive: true,
                 scales: {
@@ -173,8 +150,22 @@ export default function ImpactDashboard() {
             />
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-card p-6 rounded-lg border border-border">
+            <h3 className="text-lg text-primary mb-2">Total Carbon Saved</h3>
+            <p className="text-3xl font-bold text-card-foreground">950 kg CO₂</p>
+          </div>
+          <div className="bg-card p-6 rounded-lg border border-border">
+            <h3 className="text-lg text-muted-foreground mb-2">Actual Emissions</h3>
+            <p className="text-3xl font-bold text-card-foreground">225 kg CO₂</p>
+          </div>
+          <div className="bg-card p-6 rounded-lg border border-border">
+            <h3 className="text-lg text-destructive mb-2">Car Equivalent</h3>
+            <p className="text-3xl font-bold text-card-foreground">1175 kg CO₂</p>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
-

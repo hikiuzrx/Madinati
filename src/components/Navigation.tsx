@@ -7,9 +7,52 @@ import Map from "./MapCard";
 import DirectionsCard from "./DirectionsCard";
 import HistoryCard from "./HistoryCard";
 import { Button } from "@/components/ui/button";
-import { calculateDirections } from "@/lib/calculateDirections";
+import { calculateDirectionsWithCarbon } from "@/lib/calculateDirections";
 import type { Direction } from "@/lib/schemas/calculations";
 import { HistoryEntry } from "@/lib/schemas/history";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
+interface CarbonMetrics {
+    actualCarbon: number;
+    expectedCarbon: number;
+    savedCarbon: number;
+    breakdown: {
+        method: string;
+        distance: number;
+        carbonEmitted: number;
+    }[];
+}
+
+function CarbonCard({ metrics }: { metrics: CarbonMetrics }) {
+    return (
+      <Card className="bg-card text-card-foreground">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-medium">Carbon Impact</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 rounded-lg bg-secondary/30 border border-border">
+              <p className="text-sm text-primary">Saved Carbon</p>
+              <p className="text-lg font-bold text-primary">
+                {metrics.savedCarbon.toFixed(2)} kg CO₂
+              </p>
+            </div>
+            <div className="p-2 rounded-lg bg-secondary/30 border border-border">
+              <p className="text-sm text-muted-foreground">Actual Emissions</p>
+              <p className="text-lg font-bold text-card-foreground">
+                {metrics.actualCarbon.toFixed(2)} kg CO₂
+              </p>
+            </div>
+          </div>
+          <div className="mt-2 p-2 rounded-lg bg-secondary/30 border border-border">
+            <p className="text-sm text-muted-foreground">
+              vs. {metrics.expectedCarbon.toFixed(2)} kg CO₂ by car
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
 function updateLocationHistory(
     departingLocation: string,
@@ -37,6 +80,7 @@ export default function Navigation() {
     const [departingLocation, setDepartingLocation] = useState("");
     const [destinationLocation, setDestinationLocation] = useState("");
     const [directions, setDirections] = useState<Direction[]>([]);
+    const [carbonMetrics, setCarbonMetrics] = useState<CarbonMetrics | null>(null);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
 
     function findRoute() {
@@ -46,16 +90,24 @@ export default function Navigation() {
         }
         updateLocationHistory(departingLocation, destinationLocation, setHistory);
         try {
-            setDirections(calculateDirections(departingLocation, destinationLocation));
+            const result = calculateDirectionsWithCarbon(departingLocation, destinationLocation);
+            setDirections(result.directions);
+            setCarbonMetrics(result.carbonMetrics);
         } catch {
             toast.error("No viable path found");
             setDirections([]);
+            setCarbonMetrics(null);
         }
     }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4">
-            <Map directions={directions} />
+            <div className="space-y-4">
+                <Map directions={directions} />
+            
+                {carbonMetrics && <CarbonCard metrics={carbonMetrics} />}
+
+            </div>
             <div className="space-y-4 h-full grid grid-rows-[auto_1fr]">
                 <div className="space-y-2">
                     <LocationPicker
@@ -86,4 +138,3 @@ export default function Navigation() {
         </div>
     );
 }
-
