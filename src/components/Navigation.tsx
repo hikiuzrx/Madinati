@@ -1,16 +1,19 @@
 "use client";
+"use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
+import LocationPicker from "@/components/LocationPicker";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import LocationPicker from "./LocationPicker";
-import Map from "./MapCard";
+import { calculateDirections } from "@/lib/calculateDirections";
+import { HistoryEntry } from "@/lib/schemas/history";
+import { Direction } from "@/lib/schemas/calculations";
 import DirectionsCard from "./DirectionsCard";
 import HistoryCard from "./HistoryCard";
-import { Button } from "@/components/ui/button";
 import { calculateDirectionsWithCarbon } from "@/lib/calculateDirections";
-import type { Direction } from "@/lib/schemas/calculations";
-import { HistoryEntry } from "@/lib/schemas/history";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import MapCard from "./MapCard";
 
 interface CarbonMetrics {
     actualCarbon: number;
@@ -66,13 +69,13 @@ function updateLocationHistory(
         time: new Date().toISOString(),
     };
     try {
-        const stored = localStorage.getItem(storageKey);
-        const history = stored ? JSON.parse(stored) : [];
-        localStorage.setItem(storageKey, JSON.stringify([entry, ...history]));
-        setHistory([entry, ...history]);
-    } catch {
-        localStorage.setItem(storageKey, JSON.stringify([entry]));
-        setHistory([entry]);
+        const storedHistory = localStorage.getItem(storageKey);
+        const history = storedHistory ? JSON.parse(storedHistory) : [];
+        history.push(entry);
+        localStorage.setItem(storageKey, JSON.stringify(history));
+        setHistory(history);
+    } catch (error) {
+        toast.error("Failed to update location history");
     }
 }
 
@@ -103,7 +106,7 @@ export default function Navigation() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4">
             <div className="space-y-4">
-                <Map directions={directions} />
+                <MapCard directions={directions} />
             
                 {carbonMetrics && <CarbonCard metrics={carbonMetrics} />}
 
