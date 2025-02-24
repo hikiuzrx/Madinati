@@ -6,7 +6,6 @@ import LocationPicker from "./LocationPicker";
 import Map from "./MapCard";
 import DirectionsCard from "./DirectionsCard";
 import HistoryCard from "./HistoryCard";
-import Options from "./Options";
 import { Button } from "@/components/ui/button";
 import { calculateDirections } from "@/lib/calculateDirections";
 import type { Direction } from "@/lib/schemas/calculations";
@@ -55,11 +54,8 @@ export default function Navigation() {
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-rows-2 gap-4">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4">
             <Map directions={directions} />
-           
-            
             <div className="space-y-4 h-full grid grid-rows-[auto_1fr]">
                 <div className="space-y-2">
                     <LocationPicker
@@ -87,7 +83,6 @@ export default function Navigation() {
                     />
                 )}
             </div>
-          
         </div>
     );
 }

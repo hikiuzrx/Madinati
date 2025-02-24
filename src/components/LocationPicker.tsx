@@ -98,7 +98,7 @@ export default function LocationPicker({ location, set_location, label }: Locati
                     onChange={handleInputChange}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    className="w-full text-black"
+                    className={`w-full ${isFocused ? 'text-black' : 'text-white'}`}
                 />
                 <Button variant="secondary" onClick={handleFindClosestStation}>
                     <LocateFixed className="m-1" />
